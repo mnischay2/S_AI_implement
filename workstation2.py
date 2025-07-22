@@ -1,7 +1,7 @@
 import socket
 
 HOST = '0.0.0.0'  # Listen on all interfaces
-PORT = 9999
+PORT = 5000
 
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server_socket.bind((HOST, PORT))
