@@ -46,26 +46,37 @@ void loop() {
   float dhtTemp = dht.readTemperature();
   float dhtHum = dht.readHumidity();
   float bmpTemp = bmp.readTemperature();
-  float bmpPressure = bmp.readPressure() / 100.0F; // convert Pa to hPa
-
-  String message = "";
+  float bmpPressure = bmp.readPressure() / 100.0F; // hPa
 
   if (isnan(dhtTemp) || isnan(dhtHum) || isnan(bmpTemp) || isnan(bmpPressure)) {
-    message = "Sensor read error\n";
-  } else {
-    float avgTemp = dhtTemp;
-    message = "Temp: " + String(avgTemp, 2) + " C\n";
-    message += "Pressure: " + String(bmpPressure, 2) + " hPa\n";
-    message += "Humidity: " + String(dhtHum, 2) + " %\n";
+    Serial.println("Sensor read error");
+    delay(500);
+    return;
   }
+
+  // Create timestamp (hh:mm:ss)
+  unsigned long ms = millis() / 1000;
+  int hh = (ms / 3600) % 24;
+  int mm = (ms / 60) % 60;
+  int ss = ms % 60;
+  char timestamp[9];
+  sprintf(timestamp, "%02d:%02d:%02d", hh, mm, ss);
+
+  float avgTemp = dhtTemp; // use DHT temp only
+
+  // Format: time,temp,pressure,humidity
+  String message = String(timestamp) + "," +
+                   String(avgTemp, 2) + "," +
+                   String(bmpPressure, 2) + "," +
+                   String(dhtHum, 2);
 
   // Send to server
   WiFiClient client;
   if (client.connect(host, port)) {
-    client.print(message);
+    client.println(message);
     client.stop();
     Serial.println("Sent to server:");
-    Serial.print(message);
+    Serial.println(message);
   } else {
     Serial.println("Connection to server failed.");
   }
