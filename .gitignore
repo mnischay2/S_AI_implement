@@ -1,2 +1,3 @@
 # Ignore csv_data directory
 csv_data/
+__pycache__/
