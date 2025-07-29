@@ -40,6 +40,7 @@ def upload_all_csv(folder_path=CSV_FOLDER, api_url=API_URL, auth_token=AUTH_TOKE
     for filename in csv_files:
         filepath = os.path.join(folder_path, filename)
         upload_csv_file(filepath, filename, api_url, auth_token)
+    return("done")
 
 if __name__ == "__main__":
-    upload_all_csv()
+    print(upload_all_csv())
