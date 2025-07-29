@@ -8,7 +8,7 @@ const char* password = "IIPDELHI@1234";
 
 // Server IP and port
 const char* host = "192.168.1.108";
-const uint16_t port = 5000;
+const uint16_t port = 5001;
 
 #define DHTPIN 2
 #define DHTTYPE DHT11
