@@ -19,6 +19,8 @@
 3. photoresistance_sensor:
     3.1. uses following Modules:
             LDR
+            Laser
+            Focus Light
             ESP32 type C
             OLED
     3.2. used for measuring the photoresistance of a packaging film over the sensor box:

@@ -17,21 +17,20 @@ if not exists(csv_filename):
         writer.writerow([
             "PC Date", "PC Time",
             "in_temp", "in_pressure", "in_humidity",
-            "out_temp", "out_pressure", "out_humidity"
+            "out_temp", "out_pressure", "out_humidity",
+            "Logging Duration (s)"
         ])
 
 # === GUI Setup ===
 root = tk.Tk()
 root.title("Smart Sensor Workstation")
-root.attributes("-fullscreen", True)  # Start fullscreen
+root.attributes("-fullscreen", True)
 
 def toggle_fullscreen(event=None):
-    is_fullscreen = root.attributes("-fullscreen")
-    root.attributes("-fullscreen", not is_fullscreen)
+    root.attributes("-fullscreen", not root.attributes("-fullscreen"))
 
-root.bind("<F11>", toggle_fullscreen)  # F11 to toggle fullscreen
-root.bind("<Escape>", lambda e: root.attributes("-fullscreen", False))  # Esc to exit fullscreen
-
+root.bind("<F11>", toggle_fullscreen)
+root.bind("<Escape>", lambda e: root.attributes("-fullscreen", False))
 root.configure(bg="#1e1e1e")
 
 # === Icon Setup ===
@@ -60,7 +59,8 @@ labels = [
 
 entries = {
     "IN": {},
-    "OUT": {}
+    "OUT": {},
+    "DURATION": {}
 }
 
 # Row 0: PC Date and Time
@@ -82,11 +82,43 @@ for i, field_label in enumerate(labels[2:]):
         entry.grid(row=i + 2, column=j * 2 + 1, padx=10)
         entries[sensor][field_label] = entry
 
+# Row 5 Column 1: Logging Duration and logging status
+ttk.Label(root, text="Logging Duration (s):").grid(row=5, column=0, padx=10, pady=6, sticky='e')
+duration_entry = ttk.Entry(root, width=20, state='readonly', justify='center')
+duration_entry.grid(row=5, column=1, padx=10)
+entries["DURATION"]["seconds"] = duration_entry
+# Row 5 Column 2: logging status
+ttk.Label(root, text="Logging Status:").grid(row=5, column=2, padx=10, pady=6, sticky='e')
+logging_status = ttk.Entry(root, width=20, state='readonly', justify='center')
+logging_status.grid(row=5, column=3, padx=10)
+entries["DURATION"]["seconds"] = logging_status
+
+
 # === Logging Control ===
 logging_active = tk.BooleanVar(value=False)
 row_buffer = {}
+logging_start_time = None
+
+def update_logging_duration():
+    if logging_active.get() and logging_start_time:
+        duration = int((datetime.now() - logging_start_time).total_seconds())
+        duration_entry.config(state='normal')
+        duration_entry.delete(0, tk.END)
+        duration_entry.insert(0, str(duration))
+        duration_entry.config(state='readonly')
+        logging_status.config(state='normal')
+        logging_status.delete(0, tk.END)
+        logging_status.insert(0, "Logging...")
+        logging_status.config(state='readonly')
+    else:
+        logging_status.config(state='normal')
+        logging_status.delete(0, tk.END)
+        logging_status.insert(0, "Not Logging")
+        logging_status.config(state='readonly')
+    root.after(1000, update_logging_duration)
 
 def update_fields(source, data):
+    global logging_start_time
     try:
         temp, pressure, humidity = data.strip().split(",")
         now = datetime.now()
@@ -95,10 +127,13 @@ def update_fields(source, data):
         timestamp = pc_date + " " + pc_time
 
         if logging_active.get():
+            duration = int((now - logging_start_time).total_seconds())
+
             if timestamp not in row_buffer:
                 row_buffer[timestamp] = {
                     "PC Date": pc_date,
-                    "PC Time": pc_time
+                    "PC Time": pc_time,
+                    "Duration": duration
                 }
 
             prefix = "in" if source == "IN" else "out"
@@ -106,6 +141,7 @@ def update_fields(source, data):
             row_buffer[timestamp][f"{prefix}_pressure"] = pressure
             row_buffer[timestamp][f"{prefix}_humidity"] = humidity
 
+            # Update time fields
             entries["PC Date"].config(state='normal')
             entries["PC Date"].delete(0, tk.END)
             entries["PC Date"].insert(0, pc_date)
@@ -116,27 +152,31 @@ def update_fields(source, data):
             entries["PC Time"].insert(0, pc_time)
             entries["PC Time"].config(state='readonly')
 
-            sensor_fields = entries[source]
+            # Update sensor entries
             for label_text, value in zip(
                 ["Temperature (°C)", "Pressure (hPa)", "Humidity (%)"],
                 [temp, pressure, humidity]
             ):
-                sensor_fields[label_text].config(state='normal')
-                sensor_fields[label_text].delete(0, tk.END)
-                sensor_fields[label_text].insert(0, value)
-                sensor_fields[label_text].config(state='readonly')
+                e = entries[source][label_text]
+                e.config(state='normal')
+                e.delete(0, tk.END)
+                e.insert(0, value)
+                e.config(state='readonly')
 
+            # Save if both in and out data are available
             data_row = row_buffer[timestamp]
-            if all(k in data_row for k in [
+            required_keys = [
                 "in_temp", "in_pressure", "in_humidity",
                 "out_temp", "out_pressure", "out_humidity"
-            ]):
+            ]
+            if all(k in data_row for k in required_keys):
                 with open(csv_filename, mode='a', newline='') as file:
                     writer = csv.writer(file)
                     writer.writerow([
                         data_row["PC Date"], data_row["PC Time"],
                         data_row["in_temp"], data_row["in_pressure"], data_row["in_humidity"],
-                        data_row["out_temp"], data_row["out_pressure"], data_row["out_humidity"]
+                        data_row["out_temp"], data_row["out_pressure"], data_row["out_humidity"],
+                        data_row["Duration"]
                     ])
                 del row_buffer[timestamp]
 
@@ -153,25 +193,31 @@ def socket_server(port, source):
         client, addr = server.accept()
         data = client.recv(1024).decode().strip()
         if data:
-            print(f"[{source}] Data: {data}")
             root.after(0, update_fields, source, data)
         client.close()
 
 # === Toggle Logging Button ===
 def toggle_logging():
+    global logging_start_time
     current = logging_active.get()
     logging_active.set(not current)
-    status_label.config(text="🟢 Logging ON" if not current else "🔴 Logging OFF")
-    toggle_button.config(text="Stop Logging" if not current else "Start Logging")
+    if not current:
+        logging_start_time = datetime.now()
+        toggle_button.config(text="Stop Logging")
+    else:
+        logging_start_time = None
+        toggle_button.config(text="Start Logging")
+        duration_entry.config(state='normal')
+        duration_entry.delete(0, tk.END)
+        duration_entry.config(state='readonly')
 
 toggle_button = ttk.Button(root, text="Start Logging", command=toggle_logging)
 toggle_button.grid(row=6, column=0, padx=10, pady=15)
 
-status_label = ttk.Label(root, text="🔴 Logging OFF", font=("Segoe UI", 10, "bold"))
-status_label.grid(row=6, column=1, columnspan=2, sticky='w')
 
-# === Start Server Threads ===
+# === Start Servers and Duration Clock ===
 threading.Thread(target=socket_server, args=(5000, "IN"), daemon=True).start()
 threading.Thread(target=socket_server, args=(5001, "OUT"), daemon=True).start()
+update_logging_duration()
 
 root.mainloop()
