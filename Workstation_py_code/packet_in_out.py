@@ -4,7 +4,9 @@ import tkinter as tk
 from tkinter import ttk
 from datetime import datetime
 import csv
+import os
 from os.path import exists
+from PIL import Image, ImageTk
 
 # === CSV Setup ===
 csv_filename = "packet_strength.csv"
@@ -20,9 +22,21 @@ if not exists(csv_filename):
 # === GUI Setup ===
 root = tk.Tk()
 root.title("Smart Sensor Workstation")
-root.geometry("640x360")
+root.geometry("740x400")
 root.configure(bg="#1e1e1e")
 root.resizable(False, False)
+
+# === Icon Setup ===
+try:
+    
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    icon_path = os.path.join(script_dir, "assets", "bodhi_icon.png")
+    icon_img = Image.open(icon_path)
+    icon_photo = ImageTk.PhotoImage(icon_img)
+    root.iconphoto(False, icon_photo)
+except Exception as e:
+    print(f"[WARNING] Couldn't load icon: {e}")
+
 font = ("Segoe UI", 11)
 
 style = ttk.Style(root)
@@ -47,16 +61,15 @@ for i, label in enumerate(["PC Date", "PC Time"]):
     ttk.Label(root, text=label + ":").grid(row=0, column=i * 2, padx=10, pady=8, sticky='e')
     entry = ttk.Entry(root, width=20, state='readonly', justify='center')
     entry.grid(row=0, column=i * 2 + 1, padx=10)
-    entries[label] = entry  # shared entries
+    entries[label] = entry
 
-# Labels for IN and OUT headers
+# Headers
 ttk.Label(root, text="IN Sensor", foreground="#00ff88", font=("Segoe UI", 11, "bold")).grid(row=1, column=1)
 ttk.Label(root, text="OUT Sensor", foreground="#ffcc00", font=("Segoe UI", 11, "bold")).grid(row=1, column=3)
 
 # Rows 2-4: Sensor Readings
 for i, label in enumerate(labels[2:]):
     ttk.Label(root, text=label + ":").grid(row=i + 2, column=0, padx=10, pady=6, sticky='e')
-
     for j, sensor in enumerate(["IN", "OUT"]):
         entry = ttk.Entry(root, width=20, state='readonly', justify='center')
         entry.grid(row=i + 2, column=j * 2 + 1, padx=10)
