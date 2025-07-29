@@ -9,7 +9,8 @@ from os.path import exists
 from PIL import Image, ImageTk
 
 # === CSV Setup ===
-csv_filename = "packet_strength.csv"
+os.makedirs("csv_data", exist_ok=True)
+csv_filename = os.path.join("csv_data", "packet_strength.csv")
 if not exists(csv_filename):
     with open(csv_filename, mode='w', newline='') as file:
         writer = csv.writer(file)
@@ -22,13 +23,19 @@ if not exists(csv_filename):
 # === GUI Setup ===
 root = tk.Tk()
 root.title("Smart Sensor Workstation")
-root.geometry("740x400")
+root.attributes("-fullscreen", True)  # Start fullscreen
+
+def toggle_fullscreen(event=None):
+    is_fullscreen = root.attributes("-fullscreen")
+    root.attributes("-fullscreen", not is_fullscreen)
+
+root.bind("<F11>", toggle_fullscreen)  # F11 to toggle fullscreen
+root.bind("<Escape>", lambda e: root.attributes("-fullscreen", False))  # Esc to exit fullscreen
+
 root.configure(bg="#1e1e1e")
-root.resizable(False, False)
 
 # === Icon Setup ===
 try:
-    
     script_dir = os.path.dirname(os.path.abspath(__file__))
     icon_path = os.path.join(script_dir, "assets", "bodhi_icon.png")
     icon_img = Image.open(icon_path)
@@ -68,12 +75,12 @@ ttk.Label(root, text="IN Sensor", foreground="#00ff88", font=("Segoe UI", 11, "b
 ttk.Label(root, text="OUT Sensor", foreground="#ffcc00", font=("Segoe UI", 11, "bold")).grid(row=1, column=3)
 
 # Rows 2-4: Sensor Readings
-for i, label in enumerate(labels[2:]):
-    ttk.Label(root, text=label + ":").grid(row=i + 2, column=0, padx=10, pady=6, sticky='e')
+for i, field_label in enumerate(labels[2:]):
+    ttk.Label(root, text=field_label + ":").grid(row=i + 2, column=0, padx=10, pady=6, sticky='e')
     for j, sensor in enumerate(["IN", "OUT"]):
         entry = ttk.Entry(root, width=20, state='readonly', justify='center')
         entry.grid(row=i + 2, column=j * 2 + 1, padx=10)
-        entries[sensor][label] = entry
+        entries[sensor][field_label] = entry
 
 # === Logging Control ===
 logging_active = tk.BooleanVar(value=False)
@@ -99,7 +106,6 @@ def update_fields(source, data):
             row_buffer[timestamp][f"{prefix}_pressure"] = pressure
             row_buffer[timestamp][f"{prefix}_humidity"] = humidity
 
-            # Show common date & time
             entries["PC Date"].config(state='normal')
             entries["PC Date"].delete(0, tk.END)
             entries["PC Date"].insert(0, pc_date)
@@ -110,7 +116,6 @@ def update_fields(source, data):
             entries["PC Time"].insert(0, pc_time)
             entries["PC Time"].config(state='readonly')
 
-            # Show respective sensor values
             sensor_fields = entries[source]
             for label_text, value in zip(
                 ["Temperature (°C)", "Pressure (hPa)", "Humidity (%)"],
@@ -121,7 +126,6 @@ def update_fields(source, data):
                 sensor_fields[label_text].insert(0, value)
                 sensor_fields[label_text].config(state='readonly')
 
-            # Save to CSV only when both IN & OUT are available
             data_row = row_buffer[timestamp]
             if all(k in data_row for k in [
                 "in_temp", "in_pressure", "in_humidity",
@@ -170,5 +174,4 @@ status_label.grid(row=6, column=1, columnspan=2, sticky='w')
 threading.Thread(target=socket_server, args=(5000, "IN"), daemon=True).start()
 threading.Thread(target=socket_server, args=(5001, "OUT"), daemon=True).start()
 
-# Start GUI
 root.mainloop()
