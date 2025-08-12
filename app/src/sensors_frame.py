@@ -1,23 +1,4 @@
-# SF_full_rewrite.py
-"""
-Full rewrite of DynamicSensorFrame with:
-- Fullscreen-friendly, centered, monospace key-value layout (one column per port)
-- Per-port socket servers (one thread per port)
-- Robust data_slice handling
-- Port labels mapping (Port_Labels) — supports list-of-lists or single list
-- CSV logging that places each port's values into the correct columns (based on Port_Labels or csv_columns)
-- Upload button (calls src.upload.upload_csv)
-- Status banner (green if ALL ports connected, red otherwise)
-- If the overall status is Disconnected, logging cannot start and will be stopped immediately
-- Graceful shutdown
-
-Usage: called the same way as the original module:
-    import src.sensors_frame as SF
-    sensor_frame_instance = SF.display(parent, sensor_config)
-    sensor_frame_instance.get_frame().pack(fill=tk.BOTH, expand=True)
-
-"""
-
+#sensors_frame.py
 import socket
 import threading
 import tkinter as tk
