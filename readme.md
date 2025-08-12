@@ -4,4 +4,5 @@ workstation.py is for central raspberry pi
 PORTS:
 5000 for in_packet_sensor
 5001 for out_packet_sensor
-5002 for photoresistance_sensor
+
+

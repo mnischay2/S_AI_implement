@@ -191,7 +191,7 @@ def update_fields(source, data):
     except Exception as e:
         print(f"[ERROR] {source} update failed: {e}")
 
-# === Socket Server ===
+# === So    cket Server ===
 def socket_server(port, source):
     global last_received_in, last_received_out
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
