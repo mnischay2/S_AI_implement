@@ -5,7 +5,7 @@
 const char* ssid = "COMPUTER LAB 2.4";
 const char* password = "IIPDELHI@1234";
 // Server IP and port
-const char* host = "192.168.1.108";
+const char* host = "192.168.1.106";
 const uint16_t port = 5001;
 // DHT11 setup
 #define DHTPIN 2
