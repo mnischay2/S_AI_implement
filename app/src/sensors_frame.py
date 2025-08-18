@@ -401,11 +401,15 @@ class DynamicSensorFrame:
             n = len(self.port_labels[p_idx])
 
         selected = parts[:n]
-        # pad/truncate
+        # pad/truncate to fit label count
         if len(selected) < len(self.port_labels[p_idx]):
             selected += ["--"] * (len(self.port_labels[p_idx]) - len(selected))
         if len(selected) > len(self.port_labels[p_idx]):
             selected = selected[: len(self.port_labels[p_idx])]
+
+        # === NEW: skip if all values are just "-" or "--" ===
+        if all(v.strip("-") == "" for v in selected):
+            return
 
         # update UI values
         for i, val in enumerate(selected):
