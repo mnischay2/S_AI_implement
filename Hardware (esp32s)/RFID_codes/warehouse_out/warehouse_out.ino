@@ -175,23 +175,22 @@ bool writeBlock8(String &data) {
     return false;
   }
 
-  byte writeBuffer[16];
-  uint32_t timestamp = millis() / 1000;
-  uint32_t cardID = random(1000, 9999);
-
-  writeBuffer[0] = cardID & 0xFF;
-  writeBuffer[1] = (cardID >> 8) & 0xFF;
-  writeBuffer[2] = (cardID >> 16) & 0xFF;
-  writeBuffer[3] = (cardID >> 24) & 0xFF;
-  for (int i = 4; i < 16; i++) writeBuffer[i] = 0;
-
-  if (mfrc522.MIFARE_Write(8, writeBuffer, 16) != MFRC522::STATUS_OK) {
-    Serial.println("Block 8 write failed");
+  byte buffer[18];
+  byte size = sizeof(buffer);
+  if (mfrc522.MIFARE_Read(8, buffer, &size) != MFRC522::STATUS_OK) {
+    Serial.println("Block 8 read failed");
     return false;
   }
 
+  // Decode the first 4 bytes as little-endian integer
+  uint32_t cardID = 0;
+  cardID |= buffer[0];
+  cardID |= ((uint32_t)buffer[1] << 8);
+  cardID |= ((uint32_t)buffer[2] << 16);
+  cardID |= ((uint32_t)buffer[3] << 24);
+
   data = "CardID:" + String(cardID);
-  Serial.println("Block 8 written: " + data);
+  Serial.println("Block 8 read: " + data);
   return true;
 }
 
