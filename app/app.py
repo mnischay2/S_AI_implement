@@ -3,7 +3,7 @@ from tkinter import ttk
 import os
 from PIL import Image, ImageTk
 import src.sensors_frame as SF
-from src.new_config import SENSOR_CONFIG
+from src.config import SENSOR_CONFIG
 import src.upload as upload
 
 class Application(tk.Tk):

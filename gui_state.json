@@ -1,0 +1,12 @@
+{
+  "next_id": 1,
+  "used_ids": [],
+  "device_stats": {
+    "192.168.1.109": {
+      "in_count": 7,
+      "out_count": 0,
+      "total": 7
+    }
+  },
+  "timestamp": "2025-08-18T12:20:18.918282"
+}

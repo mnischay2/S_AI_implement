@@ -16,5 +16,13 @@ SENSOR_CONFIG = [
         "csv_file": "photosensitivity.csv",
         "csv_columns": ["R_VALUE", "G_VALUE", "B_VALUE", "Detection_Value"],
         "Port_Labels": ["R Value", "G Value", "B Value", "Detection Value"]
+    },{
+        "id": "RFID",
+        "name": "RFID Warehousing System",
+        "ports": [5003],
+        "data_slice": [3],
+        "csv_file": "RFID.csv",
+        "csv_columns": ["UID", "alloted_ID", "location"],
+        "Port_Labels": ["UID", "Alotted ID", "location"]
     },
 ]

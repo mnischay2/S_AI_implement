@@ -428,7 +428,7 @@ class DynamicSensorFrame:
                 self.show_alert("A port disconnected. Stopping logging.")
                 self._force_stop_logging()
                 return
-
+            
             duration = str(timedelta(seconds=int((now - self.logging_start_time).total_seconds())))
             # prepare flattened row with values placed at correct offset for this port
             row_values = [""] * self.total_columns
@@ -509,7 +509,7 @@ class DynamicSensorFrame:
         now = time.time()
         for p in self.ports:
             last = self.last_received.get(p)
-            if not last or (now - last) > 2.0:
+            if not last or (now - last) > 3.0:
                 return False
         return True
 
