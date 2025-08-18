@@ -7,7 +7,7 @@ const char* ssid = "COMPUTER LAB 2.4";
 const char* password = "IIPDELHI@1234";
 
 // Server details
-const char* server_ip = "192.168.1.108";
+const char* server_ip = "192.168.1.106";
 const uint16_t server_port = 5003;
 WiFiClient client;
 
