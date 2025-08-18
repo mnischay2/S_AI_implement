@@ -189,7 +189,7 @@ bool writeBlock8(String &data) {
   cardID |= ((uint32_t)buffer[2] << 16);
   cardID |= ((uint32_t)buffer[3] << 24);
 
-  data = "CardID:" + String(cardID);
+  data = "ProdID:" + String(cardID);
   Serial.println("Block 8 read: " + data);
   return true;
 }

@@ -190,7 +190,7 @@ bool writeBlock8(String &data) {
     return false;
   }
 
-  data = "CardID:" + String(cardID);
+  data = "ProdID:" + String(cardID);
   Serial.println("Block 8 written: " + data);
   return true;
 }
