@@ -24,5 +24,14 @@ SENSOR_CONFIG = [
         "csv_file": "RFID.csv",
         "csv_columns": ["UID", "alloted_ID", "location"],
         "Port_Labels": ["UID", "Alotted ID", "location"]
+    },{
+        "id": "Soil",
+        "name": "Soil Moisture Detection System",
+        "ports": [5004],
+        "data_slice": [3],
+        "csv_file": "Soil.csv",
+        "csv_columns": ["Moisture_percent"],
+        "Port_Labels": ["Moisture Percentage"]
     },
+        
 ]
