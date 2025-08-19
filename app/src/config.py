@@ -14,8 +14,8 @@ SENSOR_CONFIG = [
         "ports": [5002],
         "data_slice": [4],
         "csv_file": "photosensitivity.csv",
-        "csv_columns": ["R_VALUE", "G_VALUE", "B_VALUE", "Detection_Value"],
-        "Port_Labels": ["R Value", "G Value", "B Value", "Detection Value"]
+        "csv_columns": ["Light_Percent"],
+        "Port_Labels": ["Light Percentage"]
     },{
         "id": "RFID",
         "name": "RFID Warehousing System",
@@ -34,4 +34,4 @@ SENSOR_CONFIG = [
         "Port_Labels": ["Moisture Percentage"]
     },
         
-]
+]   
