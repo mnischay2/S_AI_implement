@@ -39,8 +39,8 @@ SENSOR_CONFIG = [
         "ports": [5005],
         "data_slice": [3],
         "csv_file": "AirQuality.csv",
-        "csv_columns": ["MQ_2", "MQ_4"],
-        "Port_Labels": ["MQ_2", "MQ_4"]
+        "csv_columns": ["CH4", "LPG"],
+        "Port_Labels": ["CH4", "LPG"]
     }
 
 ]
