@@ -33,5 +33,14 @@ SENSOR_CONFIG = [
         "csv_columns": ["Moisture_percent"],
         "Port_Labels": ["Moisture Percentage"]
     },
-        
-]   
+    {
+        "id": "Air Quality",
+        "name": "Air Quality Monitoring System",
+        "ports": [5005],
+        "data_slice": [3],
+        "csv_file": "AirQuality.csv",
+        "csv_columns": ["MQ_2", "MQ_4"],
+        "Port_Labels": ["MQ_2", "MQ_4"]
+    }
+
+]
