@@ -8,7 +8,7 @@ const uint16_t port = 5002;          // <-- Replace with server port
 
 WiFiClient client;
  
-int LDRS[] = {34};        
+int LDRS[] = {32,33,34,35};        
 int numLDRs = sizeof(LDRS) / sizeof(LDRS[0]);
 int read_ldr(int pin);
 int read_all_ldr();
@@ -75,5 +75,6 @@ int read_all_ldr() {
   for (int i = 0; i < numLDRs; i++) {
     val += read_ldr(LDRS[i]);
   }
+  val=val/numLDRs;
   return val;
 }
