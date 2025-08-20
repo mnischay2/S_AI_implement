@@ -3,7 +3,7 @@ import requests
 import csv
 
 # === Configuration ===
-API_URL = "http://bodh_uat.sarthhakai.com/utilitiesservice/upload-files/Documents"
+API_URL = "http://bodh_uat.sarthhakai.com:5173/experiments/94dc835e-8551-465c-8c90-f34fdc2dae65"
 AUTH_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJjMGJmMGQ0OC04MWY2LTRmYjctYWMwOS02MjU2NjNhYjBlOTIiLCJ0SWQiOiI2YmE2NzA3NC0wNjE1LTQ4OWMtYmMwYy03OTEwYjA0MDYzYzIiLCJvcmdJZCI6ImUxNjhlMWU1LTEyMzEtNGE4ZC1hYmNmLWQ2NmM3NDU1MjIyOCIsImZpcnN0TmFtZSI6IklJUEQiLCJsYXN0TmFtZSI6ImJvZGhpIiwicm9sZSI6IlVTRVIiLCJzdWJzY3JpcHRpb25fcXVhbnRpdHkiOjgsImlhdCI6MTc1MjgzNjIzNiwiZXhwIjo0OTA4NTk2MjM2fQ.rce5Ayeaslhv5ZcjUX5mEc9MbgaVQzAhyOhn_reFDc0"  # Replace with your valid bearer token
 CSV_FOLDER = "csv_data"
 
